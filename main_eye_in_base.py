@@ -80,4 +80,5 @@ class eye_hand_cali():
         self.set_config_data(rz, rx, ry)
         print(rz, rx, ry)
 
-run = eye_hand_cali('kr10', 20, [-134, -52, -93])
+# run = eye_hand_cali('kr10', 20, [-134, -52, -93])
+run = eye_hand_cali('kr10', 20, [171.2, -64.68, 9.72])

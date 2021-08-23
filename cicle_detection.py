@@ -1,7 +1,16 @@
 import numpy as np
 import cv2
 from sklearn.cluster import KMeans
+import time
 
+def kmean_centroid(data, num_cluster):
+    est = KMeans(n_clusters=num_cluster)
+    est.fit(data)
+    labels = est.labels_
+    clustering_center_points = est.cluster_centers_[0].tolist()
+    return clustering_center_points
+
+# print(kmean_centroid([[2,3,4]],1))
 def get_circle_center(camera_data, number_cluster, crop_area):
     
     object_3d_pos_list = []
@@ -59,10 +68,11 @@ def get_circle_center(camera_data, number_cluster, crop_area):
 # print(get_circle_center(camera_data, 1, [0.1,0.9,0.3,0.6]))
 # print(get_circle_center(camera_data, 1, [0.4,0.6,0.1,0.9]))
 
-def chessboard_detection(camera_data):
+def chessboard_detection(camera_data, num_loop):
     nline = 6
     ncol = 6
-
+    chessboard_center_list = []
+    time.sleep(0.5)
     # img = cv2.imread('chestboard.jpg')
     # cam = camera.Zed_camera(24998496)#21786708, 24998496
     while True:
@@ -93,15 +103,15 @@ def chessboard_detection(camera_data):
             except Exception as ex:
                 print('')
             if len(chessboard_pc_list) > 0:
-                return np.mean(chessboard_pc_list, axis=0)
-                # return chessboard_pc_list
-            # f =  open('dummy_data/{}.npy'.format(time.time()), 'a') 
-            # np.save('dummy_data/{}.npy'.format(time.time()), np.array(pc_3d_list))
+                chessboard_center_list.append(np.mean(chessboard_pc_list, axis=0))
+            if len(chessboard_center_list) > num_loop:
+                break
         except Exception as ex:
             print('unexpect exception: ', ex)
             cv2.imshow('image', img)
             cv2.waitKey(1)
-
+    centroid = kmean_centroid(chessboard_center_list, 1)
+    return centroid
 # import setup_camera as cam
 # import matplot_show as mat
 # camera_data = cam.setup_cam()

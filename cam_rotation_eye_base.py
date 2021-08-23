@@ -108,12 +108,12 @@ def find_camera_rotation(pos_list_x, pos_list_y):
     # rotate_angle_zxy = cal.get_angle_two_line_3d(plane_fit.vector, [0,0,1])
 
     # mat.data_show_3d(rotzxy_pos_list_y + rotzxy_pos_list_x + rotzx_pos_list_x + rotzx_pos_list_y)
-    mat.data_show_3d(rotzxy_pos_list_x, rotzxy_pos_list_y )
+    # mat.data_show_3d(rotzxy_pos_list_x, rotzxy_pos_list_y )
     return rotate_angle_z, rotate_angle_zx, rotate_angle_zxy
-for index in range(len(pos_list_x)):
-    pos_x = pos_list_x[index]
-    pos_y = pos_list_y[index]
-    find_camera_rotation(pos_x, pos_y)
+# for index in range(len(pos_list_x)):
+#     pos_x = pos_list_x[index]
+#     pos_y = pos_list_y[index]
+#     find_camera_rotation(pos_x, pos_y)
 
 # pos_x = pos_list_x[6]
 # pos_y = pos_list_y[6]

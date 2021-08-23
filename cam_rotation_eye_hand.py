@@ -51,6 +51,8 @@ def find_camera_rotation(pos_list_x, pos_list_y):
     rotate_angle_z = cal.get_angle_two_line_3d(line_fit_x.vector, x_axis_direction_vector)
     if line_fit_x.vector[1] < 0:
         rotate_angle_z = -rotate_angle_z
+    if rotate_angle_z > 90:
+        rotate_angle_z = rotate_angle_z - 180
     # rotate_angle_z = -rotate_angle_z
     print('rotation Z angle = ', rotate_angle_z)
 
@@ -130,6 +132,29 @@ def find_camera_rotation(pos_list_x, pos_list_y):
     # mat.data_show_3d(rotzxy_pos_list_y + rotzxy_pos_list_x + rotzx_pos_list_x + rotzx_pos_list_y)
     mat.data_show_3d(rotzxy_pos_list_x, rotzxy_pos_list_y )
     return rotate_angle_z, rotate_angle_zx, rotate_angle_zxy
+
+def find_z_eyes_tool(cam_pos_ratio, radius):
+    # cam_pos_ratio= 0.281 # different value after change 5 degree
+    temp= 10 # temporaty
+    eye2tool_angle = 0
+    for i in range(0, 500, 1):
+        angle = i / 10
+        angle_radian_0 = math.radians(angle)
+        angle_radian_1 = math.radians(angle + 10)
+        angle_radian_2 = math.radians(angle + 20)
+        ration_0 = math.sin(angle_radian_1) -  math.sin(angle_radian_0)
+        ration_1 = math.sin(angle_radian_2) -  math.sin(angle_radian_1)
+        try:
+            ration = ration_1/ration_0
+        except:
+            continue
+        print(ration)
+        
+        if abs(ration - cam_pos_ratio) < temp:
+            temp = abs(ration - cam_pos_ratio)
+            print(i)
+            eye2tool_angle = angle
+    return math.tan(math.radians(eye2tool_angle))*radius
 # for index in range(len(pos_list_x)):
 #     pos_x = pos_list_x[index]
 #     pos_y = pos_list_y[index]

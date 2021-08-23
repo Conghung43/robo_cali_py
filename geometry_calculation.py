@@ -529,7 +529,7 @@ def get_world_posotion(point_pos, cam_pos):
 # A = [226.56621005 ,119.87214612, 648.74429224]
 # R = Rz(math.radians(88.796)) * Ry(math.radians(179.604)) * Rx(math.radians(0.02)) #0625
 # R = Rz(math.radians(90.1)) * Ry(math.radians(179)) * Rx(math.radians(-1)) #0628  -1.12, 178.97, 90.3
-R = Rz(math.radians(-4.1089)) * Ry(math.radians(-0.3339)) * Rx(math.radians(1.238)) 
-P = [-80.26243,  58.75567, 557.5    ]
-P = P*R
-print(P)
+# R = Rz(math.radians(-4.1089)) * Ry(math.radians(-0.3339)) * Rx(math.radians(1.238)) 
+# P = [-80.26243,  58.75567, 557.5    ]
+# P = P*R
+# print(P)
