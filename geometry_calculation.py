@@ -144,6 +144,8 @@ def get_angle_two_line_3d(direction_vector_1, direction_vector_2):
     cosn = np.sum(direction_vector_1*direction_vector_2)/(m1*m2)
     return math.degrees(math.acos(cosn)) 
 
+# print(get_angle_two_line_3d([0,1,0],[1,0,0]))
+
 def get_satellite_points_of_center_2d(center_point, normal_vector_2d, distance_to_center_point):
     line_equation = (normal_vector_2d[0], normal_vector_2d[1], -(normal_vector_2d[0]*center_point[0] + normal_vector_2d[1]*center_point[1]))
     x_value = (-line_equation[1]/line_equation[0], -line_equation[2]/line_equation[0])

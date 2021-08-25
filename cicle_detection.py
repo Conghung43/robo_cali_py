@@ -108,8 +108,8 @@ def chessboard_detection(camera_data, num_loop):
                 break
         except Exception as ex:
             print('unexpect exception: ', ex)
-            cv2.imshow('image', img)
-            cv2.waitKey(1)
+            # cv2.imshow('image', img)
+            # cv2.waitKey(1)
     centroid = kmean_centroid(chessboard_center_list, 1)
     return centroid
 # import setup_camera as cam
