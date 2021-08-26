@@ -151,16 +151,34 @@ class eye_hand_cali():
             centroid_pos_rotation1 = np.array(centroid_pos_rotation1)*1000 # for L515
         centroid_pos_rotation1 = centroid_pos_rotation1[0]
         # Decrease error
-        centroid_pos_rotation1[0] = centroid_pos_rotation1[0] - err.objective_3(centroid_pos_rotation1[0], 
+
+        print('Before centroid_pos_rotation1 = ', centroid_pos_rotation1)
+
+        print(err.objective_5(centroid_pos_rotation1[0], 
+                            err_cubic_equation_x[0],
+                            err_cubic_equation_x[1],
+                            err_cubic_equation_x[2],
+                            err_cubic_equation_x[3],
+                            err_cubic_equation_x[4],
+                            err_cubic_equation_x[5]))
+
+        centroid_pos_rotation1[0] = centroid_pos_rotation1[0] - err.objective_5(centroid_pos_rotation1[0], 
                                                                                     err_cubic_equation_x[0],
                                                                                     err_cubic_equation_x[1],
                                                                                     err_cubic_equation_x[2],
-                                                                                    err_cubic_equation_x[3])
-        centroid_pos_rotation1[1] = centroid_pos_rotation1[1] - err.objective_3(centroid_pos_rotation1[1], 
+                                                                                    err_cubic_equation_x[3],
+                                                                                    err_cubic_equation_x[4],
+                                                                                    err_cubic_equation_x[5])
+
+        centroid_pos_rotation1[1] = centroid_pos_rotation1[1] - err.objective_5(centroid_pos_rotation1[1], 
                                                                                     err_cubic_equation_y[0],
                                                                                     err_cubic_equation_y[1],
                                                                                     err_cubic_equation_y[2],
-                                                                                    err_cubic_equation_y[3])
+                                                                                    err_cubic_equation_y[3],
+                                                                                    err_cubic_equation_y[4],
+                                                                                    err_cubic_equation_y[5])
+
+        print('After centroid_pos_rotation1 = ', centroid_pos_rotation1)
 
         calibration_value = [eyes_tool_x, eyes_tool_y, eyes_tool_z] # trial run
         # calibration_value = [-273.88, 51.17, 400] # real environment
@@ -177,37 +195,56 @@ class eye_hand_cali():
         return point_in_world
 
     def main_function(self):
-        self.axis_movement('x')
-        self.axis_movement('y')
-        rz, rx, ry = rot.find_camera_rotation(self.pos_list_x, self.pos_list_y)
-        eyes_tool_x, eyes_tool_y = self.eyes_xy_to_tool(rz, rx, ry)
-        eyes2tool_xy_plane_dist = math.sqrt(pow(eyes_tool_x,2) + pow(eyes_tool_y,2))
-        eyes_tool_z = self.eyes_z_to_tool(rz, rx, ry, eyes2tool_xy_plane_dist)
+        # self.axis_movement('x')
+        # self.axis_movement('y')
+        # rz, rx, ry = rot.find_camera_rotation(self.pos_list_x, self.pos_list_y)
+        # eyes_tool_x, eyes_tool_y = self.eyes_xy_to_tool(rz, rx, ry)
+        # eyes2tool_xy_plane_dist = math.sqrt(pow(eyes_tool_x,2) + pow(eyes_tool_y,2))
+        # eyes_tool_z = self.eyes_z_to_tool(rz, rx, ry, eyes2tool_xy_plane_dist)
 
-        # rz, rx, ry = [-11.506,-1.6249,-1.41595]
-        # eyes_tool_x, eyes_tool_y, eyes_tool_z = [10.9294, 170.2319, 19.13388]
-        # err_cubic_equation_x = [0.015717447012632425, 4.2019336726415447e-05, -1.6169934086808004e-08, 1.0671035974199057]
-        # err_cubic_equation_y = [0.023312180922065953, 1.6267046622787156e-06, 3.060783595334982e-07, -0.12701390408516758]
         section_name = 'mapping_' + self.robot_type
 
-        err_cubic_equation_x = err.find_error_equation(rz, rx, ry, self.pos_list_x, 0, self.robo_pos_list_x, 1)
-        self.set_config_data(section_name, 'xa',err_cubic_equation_x[0])
-        self.set_config_data(section_name, 'xb',err_cubic_equation_x[1])
-        self.set_config_data(section_name, 'xc',err_cubic_equation_x[2])
-        self.set_config_data(section_name, 'xd',err_cubic_equation_x[3])
-
-        err_cubic_equation_y = err.find_error_equation(rz, rx, ry, self.pos_list_y, 1, self.robo_pos_list_y, 0)
-        self.set_config_data(section_name, 'ya',err_cubic_equation_y[0])
-        self.set_config_data(section_name, 'yb',err_cubic_equation_y[1])
-        self.set_config_data(section_name, 'yc',err_cubic_equation_y[2])
-        self.set_config_data(section_name, 'yd',err_cubic_equation_y[3])
-
+        # err_cubic_equation_x = err.find_error_equation(rz, rx, ry, self.pos_list_x, 0, self.robo_pos_list_x, 1)
+        # self.set_config_data(section_name, 'xa',err_cubic_equation_x[0])
+        # self.set_config_data(section_name, 'xb',err_cubic_equation_x[1])
+        # self.set_config_data(section_name, 'xc',err_cubic_equation_x[2])
+        # self.set_config_data(section_name, 'xd',err_cubic_equation_x[3])
+        # self.set_config_data(section_name, 'xe',err_cubic_equation_x[4])
+        # self.set_config_data(section_name, 'xf',err_cubic_equation_x[5])
+        # err_cubic_equation_y = err.find_error_equation(rz, rx, ry, self.pos_list_y, 1, self.robo_pos_list_y, 0)
+        # self.set_config_data(section_name, 'ya',err_cubic_equation_y[0])
+        # self.set_config_data(section_name, 'yb',err_cubic_equation_y[1])
+        # self.set_config_data(section_name, 'yc',err_cubic_equation_y[2])
+        # self.set_config_data(section_name, 'yd',err_cubic_equation_y[3])
+        # self.set_config_data(section_name, 'ye',err_cubic_equation_y[4])
+        # self.set_config_data(section_name, 'yf',err_cubic_equation_y[5])
         # self.set_config_data(section_name, 'rz',rz)
         # self.set_config_data(section_name, 'rx',rx)
         # self.set_config_data(section_name, 'ry',ry)
         # self.set_config_data(section_name, 'eyes_tool_x',eyes_tool_x)
         # self.set_config_data(section_name, 'eyes_tool_y',eyes_tool_y)
         # self.set_config_data(section_name, 'eyes_tool_z',eyes_tool_z)
+
+        # Read data from config
+        err_cubic_equation_x = [literal_eval(self.config[section_name]['xa']),
+                                literal_eval(self.config[section_name]['xb']),
+                                literal_eval(self.config[section_name]['xc']),
+                                literal_eval(self.config[section_name]['xd']),
+                                literal_eval(self.config[section_name]['xe']),
+                                literal_eval(self.config[section_name]['xf'])]
+        err_cubic_equation_y = [literal_eval(self.config[section_name]['ya']),
+                                literal_eval(self.config[section_name]['yb']),
+                                literal_eval(self.config[section_name]['yc']),
+                                literal_eval(self.config[section_name]['yd']),
+                                literal_eval(self.config[section_name]['ye']),
+                                literal_eval(self.config[section_name]['yf'])]
+        rz = literal_eval(self.config[section_name]['rz'])
+        rx = literal_eval(self.config[section_name]['rx'])
+        ry = literal_eval(self.config[section_name]['ry'])
+        eyes_tool_x = literal_eval(self.config[section_name]['eyes_tool_x'])
+        eyes_tool_y = literal_eval(self.config[section_name]['eyes_tool_y'])
+        eyes_tool_z = literal_eval(self.config[section_name]['eyes_tool_z'])
+
         self.mapping_eyes_robot(rz, rx, ry,eyes_tool_x, eyes_tool_y,eyes_tool_z, err_cubic_equation_x, err_cubic_equation_y)
         print(rz, rx, ry)
 
