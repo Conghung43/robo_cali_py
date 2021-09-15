@@ -18,6 +18,16 @@ class data_show_3d():
 
         plt.show()
 
+class data_show_3d_single():
+    def __init__(self, points):
+        fig = plt.figure()
+        self.ax = plt.axes(projection="3d")
+        points = np.array(points)
+        x_flat, y_flat, z_flat = points[:,0], points[:,1], points[:,2]
+        self.ax.scatter3D(x_flat, y_flat, z_flat)
+
+        plt.show()
+
 class data_show_2d():
     def __init__(self, points):
         points = np.array(points)

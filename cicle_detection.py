@@ -68,7 +68,7 @@ def get_circle_center(camera_data, number_cluster, crop_area):
 # print(get_circle_center(camera_data, 1, [0.1,0.9,0.3,0.6]))
 # print(get_circle_center(camera_data, 1, [0.4,0.6,0.1,0.9]))
 
-def chessboard_detection(camera_data, num_loop):
+def chessboard_detection(camera_data, num_loop, test_cam):
     nline = 6
     ncol = 6
     chessboard_center_list = []
@@ -91,6 +91,10 @@ def chessboard_detection(camera_data, num_loop):
             # Find the chessboard corners
             ret, corners = cv2.findChessboardCorners(gray, (nline, ncol), None)
             try:
+                if test_cam:
+                    cv2.imshow('image', img)
+                    cv2.waitKey(1)
+                    return corners
                 for corner in corners:
                     corner = corner.astype(int)
                     img = cv2.circle(img,tuple(corner[0]), 1, [0,0,255], -1)
@@ -99,9 +103,10 @@ def chessboard_detection(camera_data, num_loop):
                 img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
                 cv2.imshow('image', img)
                 cv2.waitKey(1)
-                corners2 = cv2.cornerSubPix(gray, corners, (11, 11), (-1, -1), criteria)
+                # corners2 = cv2.cornerSubPix(gray, corners, (11, 11), (-1, -1), criteria)
             except Exception as ex:
-                print('')
+                print(ex)
+                # return corners
             if len(chessboard_pc_list) > 0:
                 chessboard_center_list.append(np.mean(chessboard_pc_list, axis=0))
             if len(chessboard_center_list) > num_loop:
@@ -113,9 +118,9 @@ def chessboard_detection(camera_data, num_loop):
     centroid = kmean_centroid(chessboard_center_list, 1)
     return centroid
 # import setup_camera as cam
-# import matplot_show as mat
+# # import matplot_show as mat
 # camera_data = cam.setup_cam()
-# chessboard_pc_list = chessboard_detection(camera_data)
+# chessboard_pc_list = chessboard_detection(camera_data, 1000, False)
 # print(chessboard_pc_list*1000)
 # print(np.mean(chessboard_pc_list, axis=0))
 # chessboard_pc_list = np.concatenate((chessboard_pc_list,[np.mean(chessboard_pc_list, axis=0)]),axis = 0)

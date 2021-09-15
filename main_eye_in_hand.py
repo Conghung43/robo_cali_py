@@ -64,7 +64,7 @@ class eye_hand_cali():
                 self.conn.send_binary([[new_pos[0],new_pos[1] ,new_pos[2], self.angle_config[0], self.angle_config[1], self.angle_config[2]]])
                 self.conn.sock.recv(1024)
                 #get object position
-                centroid_pos = cicle_detection.chessboard_detection(self.camera_data,5)
+                centroid_pos = cicle_detection.chessboard_detection(self.camera_data,5, False)
                 if len(centroid_pos) > 0:
                     self.pos_list_x.append(centroid_pos)
         elif axis == 'y':
@@ -79,7 +79,7 @@ class eye_hand_cali():
                 self.conn.send_binary([[new_pos[0],new_pos[1],new_pos[2], self.angle_config[0], self.angle_config[1], self.angle_config[2]]])
                 self.conn.sock.recv(1024)
                 #get object position
-                centroid_pos = cicle_detection.chessboard_detection(self.camera_data,5)
+                centroid_pos = cicle_detection.chessboard_detection(self.camera_data,5, False)
                 if len(centroid_pos) > 0:
                     self.pos_list_y.append(centroid_pos)
 
@@ -89,14 +89,14 @@ class eye_hand_cali():
                                 self.robot_origin_pos[2], 
                                 180,0,180]])
         self.conn.sock.recv(1024)
-        centroid_pos_rotation0 = cicle_detection.chessboard_detection(self.camera_data,100)
+        centroid_pos_rotation0 = cicle_detection.chessboard_detection(self.camera_data,100, False)
         centroid_pos_rotation0 = centroid_pos_rotation0*cal.Rz(math.radians(rz))*cal.Rx(math.radians(rx))*cal.Ry(math.radians(ry))
         self.conn.send_binary([[self.robot_origin_pos[0],
                                 self.robot_origin_pos[1],
                                 self.robot_origin_pos[2], 
                                 0, 0, 180]])
         self.conn.sock.recv(1024)
-        centroid_pos_rotation1 = cicle_detection.chessboard_detection(self.camera_data,100)
+        centroid_pos_rotation1 = cicle_detection.chessboard_detection(self.camera_data,100, False)
         centroid_pos_rotation1 = centroid_pos_rotation1*cal.Rz(math.radians(rz))*cal.Rx(math.radians(rx))*cal.Ry(math.radians(ry))
         eyes2tool = (np.array(centroid_pos_rotation0) + np.array(centroid_pos_rotation1))/2
         if len(eyes2tool) == 1:
@@ -109,23 +109,23 @@ class eye_hand_cali():
     def eyes_z_to_tool(self, rz, rx, ry, eyes2tool_xy_plane_dist):
         self.conn.send_binary([[self.robot_origin_pos[0], self.robot_origin_pos[1], self.robot_origin_pos[2], 180,0,180]])
         self.conn.sock.recv(1024)
-        centroid_pos_rotation0 = cicle_detection.chessboard_detection(self.camera_data,100)
+        centroid_pos_rotation0 = cicle_detection.chessboard_detection(self.camera_data,100, False)
         centroid_pos_rotation0 = (centroid_pos_rotation0*cal.Rz(math.radians(rz))*cal.Rx(math.radians(rx))*cal.Ry(math.radians(ry)))[0].tolist()
         centroid_pos_rotation0 = cal.get_distance_two_point_3d([0,0,0],centroid_pos_rotation0[0])
         self.conn.send_binary([[self.robot_origin_pos[0],
                                 self.robot_origin_pos[1],
                                 self.robot_origin_pos[2], 
-                                180,0,170]])
+                                180,0,-170]])
         self.conn.sock.recv(1024)
-        centroid_pos_rotation1 = cicle_detection.chessboard_detection(self.camera_data,100)
+        centroid_pos_rotation1 = cicle_detection.chessboard_detection(self.camera_data,100, False)
         centroid_pos_rotation1 = (centroid_pos_rotation1*cal.Rz(math.radians(rz))*cal.Rx(math.radians(rx))*cal.Ry(math.radians(ry)))[0].tolist()
         centroid_pos_rotation1 = cal.get_distance_two_point_3d([0,0,0],centroid_pos_rotation1[0])
         self.conn.send_binary([[self.robot_origin_pos[0],
                                 self.robot_origin_pos[1],
                                 self.robot_origin_pos[2], 
-                                180,0,160]])
+                                180,0,-160]])
         self.conn.sock.recv(1024)
-        centroid_pos_rotation2 = cicle_detection.chessboard_detection(self.camera_data,100)
+        centroid_pos_rotation2 = cicle_detection.chessboard_detection(self.camera_data,100, False)
         centroid_pos_rotation2 = (centroid_pos_rotation2*cal.Rz(math.radians(rz))*cal.Rx(math.radians(rx))*cal.Ry(math.radians(ry)))[0].tolist()
         centroid_pos_rotation2 = cal.get_distance_two_point_3d([0,0,0],centroid_pos_rotation2[0])
         eyes2tool = rot.find_z_eyes_tool((centroid_pos_rotation2-centroid_pos_rotation1)/(centroid_pos_rotation1-centroid_pos_rotation0), eyes2tool_xy_plane_dist)
@@ -138,7 +138,7 @@ class eye_hand_cali():
                                 self.robot_origin_pos[2], 
                                 180,0,180]])
         self.conn.sock.recv(1024)
-        centroid_pos_rotation1 = cicle_detection.chessboard_detection(self.camera_data,100)
+        centroid_pos_rotation1 = cicle_detection.chessboard_detection(self.camera_data,100, False)
         centroid_pos_rotation1 = centroid_pos_rotation1*cal.Rz(math.radians(rz))*cal.Rx(math.radians(rx))*cal.Ry(math.radians(ry))
         if len(centroid_pos_rotation1) == 1:
             centroid_pos_rotation1 = np.array(centroid_pos_rotation1[0])*1000 # for D435
@@ -196,20 +196,11 @@ class eye_hand_cali():
         # self.set_config_data(section_name, 'rx',rx)
         # self.set_config_data(section_name, 'ry',ry)
 
-        # err_cubic_equation_x = err.find_error_equation(rz, rx, ry, self.pos_list_x, 0, self.robo_pos_list_x, 1)
-        # self.set_config_data(section_name, 'xa',err_cubic_equation_x[0])
-        # self.set_config_data(section_name, 'xb',err_cubic_equation_x[1])
-        # self.set_config_data(section_name, 'xc',err_cubic_equation_x[2])
-        # self.set_config_data(section_name, 'xd',err_cubic_equation_x[3])
-        # self.set_config_data(section_name, 'xe',err_cubic_equation_x[4])
-        # self.set_config_data(section_name, 'xf',err_cubic_equation_x[5])
-        # err_cubic_equation_y = err.find_error_equation(rz, rx, ry, self.pos_list_y, 1, self.robo_pos_list_y, 0)
-        # self.set_config_data(section_name, 'ya',err_cubic_equation_y[0])
-        # self.set_config_data(section_name, 'yb',err_cubic_equation_y[1])
-        # self.set_config_data(section_name, 'yc',err_cubic_equation_y[2])
-        # self.set_config_data(section_name, 'yd',err_cubic_equation_y[3])
-        # self.set_config_data(section_name, 'ye',err_cubic_equation_y[4])
-        # self.set_config_data(section_name, 'yf',err_cubic_equation_y[5])
+
+        rz = literal_eval(self.config[section_name]['rz'])
+        rx = literal_eval(self.config[section_name]['rx'])
+        ry = literal_eval(self.config[section_name]['ry'])
+
         # err_cubic_equation_x = err.find_error_equation_3(rz, rx, ry, self.pos_list_x, 0, self.robo_pos_list_x, 1)
         # self.set_config_data(section_name, 'xa',err_cubic_equation_x[0])
         # self.set_config_data(section_name, 'xb',err_cubic_equation_x[1])
@@ -221,46 +212,31 @@ class eye_hand_cali():
         # self.set_config_data(section_name, 'yc',err_cubic_equation_y[2])
         # self.set_config_data(section_name, 'yd',err_cubic_equation_y[3])
 
-        # eyes_tool_x, eyes_tool_y = self.eyes_xy_to_tool(rz, rx, ry)
-        # eyes2tool_xy_plane_dist = math.sqrt(pow(eyes_tool_x,2) + pow(eyes_tool_y,2))
-        # eyes_tool_z = self.eyes_z_to_tool(rz, rx, ry, eyes2tool_xy_plane_dist)
-        # self.set_config_data(section_name, 'eyes_tool_x',eyes_tool_x)
-        # self.set_config_data(section_name, 'eyes_tool_y',eyes_tool_y)
-        # self.set_config_data(section_name, 'eyes_tool_z',eyes_tool_z)
+        eyes_tool_x, eyes_tool_y = self.eyes_xy_to_tool(rz, rx, ry)
+        eyes2tool_xy_plane_dist = math.sqrt(pow(eyes_tool_x,2) + pow(eyes_tool_y,2))
+        eyes_tool_z = self.eyes_z_to_tool(rz, rx, ry, eyes2tool_xy_plane_dist)
+        self.set_config_data(section_name, 'eyes_tool_x',eyes_tool_x)
+        self.set_config_data(section_name, 'eyes_tool_y',eyes_tool_y)
+        self.set_config_data(section_name, 'eyes_tool_z',eyes_tool_z)
 
         # Read data from config
         # err_cubic_equation_x = [literal_eval(self.config[section_name]['xa']),
         #                         literal_eval(self.config[section_name]['xb']),
         #                         literal_eval(self.config[section_name]['xc']),
-        #                         literal_eval(self.config[section_name]['xd']),
-        #                         literal_eval(self.config[section_name]['xe']),
-        #                         literal_eval(self.config[section_name]['xf'])]
+        #                         literal_eval(self.config[section_name]['xd'])]
         # err_cubic_equation_y = [literal_eval(self.config[section_name]['ya']),
         #                         literal_eval(self.config[section_name]['yb']),
         #                         literal_eval(self.config[section_name]['yc']),
-        #                         literal_eval(self.config[section_name]['yd']),
-        #                         literal_eval(self.config[section_name]['ye']),
-        #                         literal_eval(self.config[section_name]['yf'])]
-        err_cubic_equation_x = [literal_eval(self.config[section_name]['xa']),
-                                literal_eval(self.config[section_name]['xb']),
-                                literal_eval(self.config[section_name]['xc']),
-                                literal_eval(self.config[section_name]['xd'])]
-        err_cubic_equation_y = [literal_eval(self.config[section_name]['ya']),
-                                literal_eval(self.config[section_name]['yb']),
-                                literal_eval(self.config[section_name]['yc']),
-                                literal_eval(self.config[section_name]['yd'])]
+        #                         literal_eval(self.config[section_name]['yd'])]
 
-        rz = literal_eval(self.config[section_name]['rz'])
-        rx = literal_eval(self.config[section_name]['rx'])
-        ry = literal_eval(self.config[section_name]['ry'])
-        eyes_tool_x = literal_eval(self.config[section_name]['eyes_tool_x'])
-        eyes_tool_y = literal_eval(self.config[section_name]['eyes_tool_y'])
-        eyes_tool_z = literal_eval(self.config[section_name]['eyes_tool_z'])
+        # eyes_tool_x = literal_eval(self.config[section_name]['eyes_tool_x'])
+        # eyes_tool_y = literal_eval(self.config[section_name]['eyes_tool_y'])
+        # eyes_tool_z = literal_eval(self.config[section_name]['eyes_tool_z'])
 
-        self.mapping_eyes_robot(rz, rx, ry,eyes_tool_x, eyes_tool_y,eyes_tool_z, err_cubic_equation_x, err_cubic_equation_y)
+        # self.mapping_eyes_robot(rz, rx, ry,eyes_tool_x, eyes_tool_y,eyes_tool_z, err_cubic_equation_x, err_cubic_equation_y)
         print(rz, rx, ry)
 
-run = eye_hand_cali('kr60_deep_1610', 30, [180, 0, 180])
+run = eye_hand_cali('kr60_deep', 30, [180, 0, 180])
 
 # rz, rx, ry = [-9.065, -1.912, -0.894]
 # eyes_tool_x, eyes_tool_y, eyes_tool_z = [75.78, -180.46, -20.82]
